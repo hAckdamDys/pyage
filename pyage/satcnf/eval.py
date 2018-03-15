@@ -1,5 +1,8 @@
+from pyage.satcnf.genotype import SATGenotype
+from pyage.core.operator import Operator
+
 class SATEvaluation(Operator):
-    def __init__(self, cnf=None): # cnf is a list of clauses f.e. [[4,1,-2],[-1,-5],[1,2],[-1]] , `-` means negative variable can't be 0
+    def __init__(self, cnf, type=None): # cnf is a list of clauses f.e. [[-1,-5],[1,2],[-1]] , `-` means negative variable can't be 0
         super(SATEvaluation, self).__init__(SATGenotype)
         self.cnf=cnf
         
