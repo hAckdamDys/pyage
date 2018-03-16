@@ -1,4 +1,5 @@
 import random
+import numpy as np
 from pyage.core.emas import EmasAgent
 from pyage.core.operator import Operator
 from pyage.satcnf.genotype import SATGenotype
@@ -35,8 +36,7 @@ class SATGenotypeInitializer(object):
 
     def __init__(self, booleans_nr, seed):
         self.booleans_nr = booleans_nr
-        random.seed(seed)
+        np.random.seed(0)
 
     def __call__(self):
-        np.random.seed(0)
-        np.random.choice(a=[False, True], size=self.booleans_nr)
+        return np.random.choice(a=[False, True], size=self.booleans_nr)

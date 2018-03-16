@@ -39,3 +39,4 @@ nosetests.xml
 
 #logs
 *.log
+.ipynb_checkpoints
