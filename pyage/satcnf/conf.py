@@ -35,21 +35,17 @@ cnf_data=pd.read_csv("50var-80claus-satisable.cnf",skiprows=11,header=None,sep="
 number_of_booleans=cnf_data.max() # 50 since clauses have values from 1 to 50, for each variable
 number_of_clauses=len(cnf_data) # 80
 
-agents_count = 10
+agents_count = 2
 logger.debug("EMAS, %s agents", agents_count)
 
 agents = generate_agents("agent", agents_count, Agent)
 
+stop_condition = lambda: StepLimitStopCondition(1600)
 
-def simple_cost_func(x): return abs(x)*10
-
-
-stop_condition = lambda: StepLimitStopCondition(1000)
-
-size = 250
+size = 500
 seed = 0
-operators = lambda: [SATEvaluation(cnf_data), TournamentSelection(size=20, tournament_size=20),
-                     SATCrossover(size=40, max_fitness=number_of_clauses), Mutation(probability=0.2, evol_probability=0.75)]
+operators = lambda: [SATEvaluation(cnf_data), TournamentSelectionV2(size=10, tournament_size=10),
+                     SATCrossover(size=100, max_fitness=number_of_clauses,worse_factor=0.1), Mutation(probability=0.1, evol_probability=0.1)]
 initializer = lambda: SATGenotypeInitializer2( size=size, booleans_nr=number_of_booleans, seed=seed)
 
 address_provider = address.SequenceAddressProvider
