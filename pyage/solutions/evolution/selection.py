@@ -9,11 +9,12 @@ class TournamentSelection(Operator):
 
     def process(self, population):
         p = list(population)
+        # print(len(p))
         population[:] = []
         for i in range(self.size):
             sample = random.sample(p, self.tournament_size)
             winner = max(sample, key=lambda genotype: genotype.fitness)
             population.append(winner)
             p.remove(winner)
-
+        # print(len(population))
 

@@ -15,10 +15,12 @@ class TournamentSelectionV2(Operator):
             sample = random.sample(p, self.tournament_size)
             winner = max(sample, key=lambda genotype: genotype.fitness)
             population.append(winner)
+            # p.remove(winner) - maybe add later
         for i in range(self.size//self.top_k):
             sample = random.sample(p, self.tournament_size)
             for winner in self.select_max_k_fitness(sample):
                 population.append(winner)
+                # p.remove(winner) - maybe add later
             
     def select_max_k_fitness(self, values):
         for i in range(self.top_k):

@@ -44,12 +44,12 @@ logger.debug("EMAS, %s agents", agents_count)
 
 agents = generate_agents("agent", agents_count, Agent)
 
-stop_condition = lambda: StepLimitStopCondition(100)
+stop_condition = lambda: StepLimitStopCondition(201)
 
 size = 250
 seed = 0
-operators = lambda: [SATEvaluation(cnf_data), TournamentSelectionV2(size=10, tournament_size=10),
-                     SATCrossover(size=100, max_fitness=number_of_clauses,worse_factor=0.1), Mutation(probability=0.1, evol_probability=0.1)]
+operators = lambda: [SATEvaluation(cnf_data), TournamentSelection(size=20, tournament_size=40),
+                     SATCrossover(size=80, max_fitness=number_of_clauses,worse_factor=0.1), Mutation(probability=0.05, evol_probability=0.5)]
 initializer = lambda: SATGenotypeInitializer2( size=size, booleans_nr=number_of_booleans, seed=seed)
 
 address_provider = address.SequenceAddressProvider
