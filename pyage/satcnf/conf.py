@@ -3,6 +3,9 @@ import logging
 import os
 import math
 
+import pandas as pd
+import numpy as np
+
 from pyage.core import address
 
 from pyage.core.agent.aggregate import AggregateAgent
@@ -12,27 +15,36 @@ from pyage.core.migration import ParentMigration
 from pyage.core.stats.gnuplot import StepStatistics
 from pyage.core.stop_condition import StepLimitStopCondition
 
-from pyage.satcnf.crossover import Crossover
-from pyage.satcnf.eval import kApprovalEvaluator 
-from pyage.satcnf._init import EmasInitializer, root_agents_factory, VotesInitializer
+from pyage.satcnf.crossover import SATCrossover
+from pyage.satcnf.eval import SATEvaluation 
+from pyage.satcnf.init import EmasInitializer, root_agents_factory, SATGenotypeInitializer
 from pyage.satcnf.mutation import Mutation
 
 logger = logging.getLogger(__name__)
 
-satvalues,cnfformat = sth sthi ...alizer(number_of_cand,number_of_votes, chosen_candidate,0)()
-logger.info("Initial votes:\n%s", "\n".join(map(str,satvals)))
+# end values
+number_of_booleans=50
+number_of_clauses=80
 
-satvals_nr = len(votes)
+cnf_data=pd.read_csv("50var-80claus-satisable.cnf",skiprows=11,header=None,sep=" ",usecols=[0,1,2]).values
+
+seed=0
+booleans=SATGenotypeInitializer(number_of_booleans,0)()
+
+
+logger.info("Initial booleans:\n%s", "\n".join(map(str,satvals)))
 
 
 agents_count = 2
 logger.debug("EMAS, %s agents", agents_count)
 agents = root_agents_factory(agents_count, AggregateAgent)
 
+
+
 stop_condition = lambda: StepLimitStopCondition(20000)
 
-agg_size = 40
-aggregated_agents = EmasInitializer(votes=votes, size=agg_size, energy=40 )
+agg_size = 4
+aggregated_agents = EmasInitializer(booleans=booleans, size=agg_size, energy=40 )
 
 emas = EmasService
 
@@ -42,9 +54,8 @@ migration_minimum = lambda: 120
 newborn_energy = lambda: 100
 transferred_energy = lambda: 40
 
-budget = 0
-evaluation = lambda: kApprovalEvaluator(k_approval_coeff,[simple_cost_func]*votes_nr,budget, init_c_places, chosen_candidate)
-crossover = lambda: Crossover(size=30)
+evaluation = lambda: SATEvaluation(cnf_data)
+crossover = lambda: SATCrossover(size=30)
 mutation = lambda: Mutation(probability=0.1, evol_probability=0.3)
 
 def simple_cost_func(x): return abs(x)*10

@@ -12,7 +12,7 @@ class SATEvaluation(Operator):
 
     def __SatCount(self, booleans):
         count_good=0
-        for clause i self.cnf:
+        for clause in self.cnf:
             # now we have clause like: [4,-1,3], since clause can't have 0 we count from 1 upwards
             # [4,-1,3] means one of 4,3 needs to be true OR 1 needs to be false
             any_good=False
@@ -20,5 +20,6 @@ class SATEvaluation(Operator):
                 if  booleans[abs(clause_num)-1] == (clause_num > 0):
                     any_good=True
                     break
+            if any_good:
                 count_good+=1
         return - count_good # we get negative value cause we want maximum number of clauses to fit
