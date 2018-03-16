@@ -3,7 +3,7 @@ from pyage.core.operator import Operator
 
 class TournamentSelectionV2(Operator):
     def __init__(self, type=None, size=20, tournament_size=20, top_k=3): # we will take top_k values instead of 1 max each time
-        super(TournamentSelection, self).__init__()
+        super(TournamentSelectionV2, self).__init__()
         self.size = size
         self.tournament_size = tournament_size
         self.top_k = top_k
@@ -17,7 +17,7 @@ class TournamentSelectionV2(Operator):
             population.append(winner)
         for i in range(self.size//self.top_k):
             sample = random.sample(p, self.tournament_size)
-            for winner in select_max_k_fitness(sample):
+            for winner in self.select_max_k_fitness(sample):
                 population.append(winner)
             
     def select_max_k_fitness(self, values):

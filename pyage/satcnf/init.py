@@ -36,7 +36,21 @@ class SATGenotypeInitializer(object):
 
     def __init__(self, booleans_nr, seed):
         self.booleans_nr = booleans_nr
-        np.random.seed(0)
+        np.random.seed(seed)
 
     def __call__(self):
+        return np.random.choice(a=[False, True], size=self.booleans_nr)
+
+class SATGenotypeInitializer2(Operator):
+    def __init__(self, size, booleans_nr, seed):
+        super(SATGenotypeInitializer2, self).__init__(SATGenotype)
+        self.size = size
+        self.booleans_nr = booleans_nr
+        np.random.seed(seed)
+
+    def process(self, population):
+        for i in range(self.size):
+            population.append(SATGenotype(self.__randomize()))
+
+    def __randomize(self):
         return np.random.choice(a=[False, True], size=self.booleans_nr)

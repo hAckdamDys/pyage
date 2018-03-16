@@ -1,4 +1,5 @@
 import random
+import numpy as np
 from pyage.core.operator import Operator
 from pyage.satcnf.genotype import SATGenotype
 
@@ -26,12 +27,13 @@ class SATCrossover(AbstractCrossover):
 
     def cross(self, p1, p2):
         logger.debug("Crossing:\n{0}\nAND\n{1}".format(p1, p2))
+        # print("crossover!!")
         # 1. chosse better fitness
         if p2.fitness > p1.fitness:
             p1,p2 = p2,p1 # swap
         # p1 has better fitness
         # 2. make array of True,False which will determine if we take value from p1 or p2
-        choose_array = np.random.rand(len(bo1gen.booleans))<self.worse_factor
+        choose_array = np.random.rand(len(p1.booleans))<self.worse_factor
         # 3. choose values from p1 or p2 depending on choose_array
         new_booleans = np.choose(choose_array,[p1.booleans,p2.booleans])
         return SATGenotype(new_booleans)

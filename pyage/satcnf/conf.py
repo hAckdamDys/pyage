@@ -7,8 +7,9 @@ import pandas as pd
 import numpy as np
 
 from pyage.core import address
+from pyage.core.agent.agent import generate_agents
 
-from pyage.core.agent.aggregate import AggregateAgent
+from pyage.core.agent.agent import generate_agents, Agent
 from pyage.core.emas import EmasService
 from pyage.core.locator import GridLocator
 from pyage.core.migration import ParentMigration
@@ -17,9 +18,13 @@ from pyage.core.stop_condition import StepLimitStopCondition
 
 from pyage.satcnf.crossover import SATCrossover
 from pyage.satcnf.eval import SATEvaluation 
-from pyage.satcnf.init import EmasInitializer, root_agents_factory, SATGenotypeInitializer
+from pyage.satcnf.init import EmasInitializer, root_agents_factory, SATGenotypeInitializer, SATGenotypeInitializer2
 from pyage.satcnf.mutation import Mutation
 from pyage.satcnf.naming_service import NamingService
+from pyage.satcnf.selection import TournamentSelectionV2
+from pyage.solutions.evolution.initializer import FloatInitializer
+
+from pyage.solutions.evolution.selection import TournamentSelection
 
 logger = logging.getLogger(__name__)
 
@@ -30,38 +35,22 @@ cnf_data=pd.read_csv("50var-80claus-satisable.cnf",skiprows=11,header=None,sep="
 number_of_booleans=cnf_data.max() # 50 since clauses have values from 1 to 50, for each variable
 number_of_clauses=len(cnf_data) # 80
 
-seed=0
-booleans=SATGenotypeInitializer(number_of_booleans,0)()
-
-
-logger.info("Initial booleans:\n%s", "\n".join(map(str,booleans)))
-
-
-agents_count = 2
+agents_count = 10
 logger.debug("EMAS, %s agents", agents_count)
-agents = root_agents_factory(agents_count, AggregateAgent)
 
+agents = generate_agents("agent", agents_count, Agent)
 
-
-stop_condition = lambda: StepLimitStopCondition(20000)
-
-agg_size = 40
-aggregated_agents = EmasInitializer(booleans=booleans, size=agg_size, energy=40 )
-
-emas = EmasService
-
-minimal_energy = lambda: 10
-reproduction_minimum = lambda: 100
-migration_minimum = lambda: 120
-newborn_energy = lambda: 100
-transferred_energy = lambda: 40
-
-evaluation = lambda: SATEvaluation(cnf_data)
-crossover = lambda: SATCrossover(size=30,max_fitness=number_of_clauses)
-mutation = lambda: Mutation(probability=0.1, evol_probability=0.3)
 
 def simple_cost_func(x): return abs(x)*10
 
+
+stop_condition = lambda: StepLimitStopCondition(1000)
+
+size = 250
+seed = 0
+operators = lambda: [SATEvaluation(cnf_data), TournamentSelection(size=20, tournament_size=20),
+                     SATCrossover(size=40, max_fitness=number_of_clauses), Mutation(probability=0.2, evol_probability=0.75)]
+initializer = lambda: SATGenotypeInitializer2( size=size, booleans_nr=number_of_booleans, seed=seed)
 
 address_provider = address.SequenceAddressProvider
 
